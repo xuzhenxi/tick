@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IAuthorityDao">
+  <resultMap id="autyMap" type="Authority">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="aicon" jdbcType="VARCHAR" property="aicon" />
+    <result column="aurl" jdbcType="VARCHAR" property="aurl" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  
+  <!-- 自连接嵌套结果 -->
+  <resultMap id="autyMap2" type="Authority">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="aicon" jdbcType="VARCHAR" property="aicon" />
+    <result column="aurl" jdbcType="VARCHAR" property="aurl" />
+    <result column="parentId" jdbcType="INTEGER" property="parentId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    
+    <collection property="auty"
+    	javaType="java.util.ArrayList"
+    	ofType="com.qfedu.entity.Authority"
+    	column="{id=id,uid=uid}"
+    	select="com.qfedu.dao.IAuthorityDao.findSonTitle">
+    	
+    </collection>
+  </resultMap>
+  
+  <!-- 嵌套结果（子菜单） -->
+  <resultMap id="autyMap3" type="Authority">
+    <id column="id1" jdbcType="INTEGER" property="id" />
+    <result column="aicon1" jdbcType="VARCHAR" property="aicon" />
+    <result column="aurl1" jdbcType="VARCHAR" property="aurl" />
+    <result column="parentId1" jdbcType="INTEGER" property="parentId" />
+    <result column="title1" jdbcType="VARCHAR" property="title" />
+    <result column="type1" jdbcType="INTEGER" property="type" />
+    <result column="uid1" jdbcType="INTEGER" property="uid" />
+    
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, aicon, aurl, parentId, title, type
+  </sql>
+  
+  <!-- 根据账号查询操作许可 -->
+  <select id="findPermitByNo" parameterType="String" resultType="String">
+ 	select a.aicon from t_user u
+ 	inner join t_userrole ur
+ 	on u.id=ur.uid
+ 	inner join t_role r
+ 	on ur.rid=r.id
+ 	inner join t_roleauthority ra
+ 	on r.id=ra.rid
+ 	inner join t_authority a
+ 	on ra.aid=a.id
+ 	where u.no=#{no}
+  </select>
+  
+  <!-- 根据账号查找主页左侧一级菜单栏 -->
+  <select id="findTitleByNo" parameterType="String" resultMap="autyMap2">
+  select DISTINCT    u.id as uid, a.id, a.aicon, a.title, a.aurl, a.parentId from t_user u
+ 	inner join t_userrole ur
+ 	on u.id=ur.uid
+ 	inner join t_role r
+ 	on ur.rid=r.id
+ 	inner join t_roleauthority ra
+ 	on r.id=ra.rid
+ 	inner join t_authority a
+ 	on ra.aid=a.id
+ 	where u.no=#{no} and a.parentId=0
+  </select>
+  
+  <!-- 根据账号查找主页左侧二级菜单栏 -->
+  <select id="findSonTitle" parameterType="map" resultMap="autyMap3">
+  select DISTINCT aa.id as id1, aa.aicon as aicon1, aa.parentId as parentId1, aa.title as title1, aa.aurl as aurl1, u.id as uid1 from t_user u
+ 	inner join t_userrole ur
+ 	on u.id=ur.uid
+ 	inner join t_role r
+ 	on ur.rid=r.id
+ 	inner join t_roleauthority ra
+ 	on r.id=ra.rid
+ 	inner join t_authority aa
+ 	on ra.aid=aa.id
+  	inner join t_authority a
+ 	on a.id=aa.parentId
+ 	
+ 	where u.id=#{uid} and aa.parentId=#{id}
+  </select>
+  
+  <!-- 获取用户总数 -->
+  <select id="count" resultType="int">
+  	select count(1) from t_authority
+  </select>
+  
+  <!-- 分页查询用户 -->
+  <select id="findByIndexAndSize" parameterType="map" resultType="Authority">
+  	select * from t_authority limit #{index},#{size}
+  </select>
+  
+  <!-- 查询角色权限id -->
+  <select id="findByRid" parameterType="int" resultMap="autyMap">
+  	select a.id from t_role r
+	inner join t_roleauthority ra
+	on r.id=ra.rid
+	inner join t_authority a
+	on ra.aid=a.id 
+	where r.id=#{id}
+  
+  </select>
+ 
+  <!-- 查询所有权限 -->
+  <select id="findAllTitle" resultType="Authority">
+  	select a.id, a.title, a.parentid from t_authority a
+  </select>
+  
+  <!-- 按父级权限id查询权限 -->
+  <select id="findByParentId" parameterType="int" resultType="Authority">
+  	select * from t_authority where parentid=#{parentId}
+  </select>
+  
+  <!-- 添加权限 -->
+  <insert id="add" parameterType="Authority">
+  	insert into t_authority(aicon, aurl, parentId, title, type) value(#{aicon}, #{aurl}, #{parentId}, #{title}, #{type})
+  </insert>
+  
+  <!-- 修改权限 -->
+   <update id="update" parameterType="Authority">
+    update t_authority
+    <set>
+      <if test="aicon != null">
+        aicon = #{aicon},
+      </if>
+      <if test="aurl != null">
+        aurl = #{aurl},
+      </if>
+      <if test="parentId != null">
+        parentId = #{parentId},
+      </if>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <!-- 删除权限 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_authority where id=#{id}
+  </delete>
+  
+  <!-- 通过id查找权限 -->
+  <select id="findByAid" parameterType="int" resultType="Authority">
+  	select * from t_authority where id=#{id}
+  </select>
+  
+  <!-- 通过名称查找权限 -->
+  <select id="findByTitle" parameterType="String" resultType="Authority">
+  	select * from t_authority where title=#{title}
+  </select>
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IStaffDao">
+  <resultMap id="staffMap" type="Staff">
+    <id column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="did" jdbcType="INTEGER" property="did" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="createdate" jdbcType="DATE" property="createdate" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+  </resultMap>
+  
+  <resultMap id="staffMap1" type="Staff">
+    <id column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="createdate" jdbcType="DATE" property="createdate" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+    
+    	<association property="dept"
+    		javaType="com.qfedu.entity.Depart"
+    		column="did"
+			select="com.qfedu.dao.IDepartDao.findDeptByStaffDid">
+    	
+    	</association>
+  </resultMap>
+  
+  
+  
+  <sql id="Base_Column_List">
+    no, name, did, flag, sex, email, qq, phone, createdate, photo
+  </sql>
+  
+  <!-- 获得员工数量 -->
+  <select id="count" parameterType="map" resultType="int">
+  	select count(1) from t_staff where 1=1
+  	<if test="name != null">
+        and name like #{name}
+      </if>
+  	<if test="sex != null">
+        and sex=#{sex}
+    </if>
+  
+  </select>
+  
+  <!-- 分页查询 -->
+  <select id="findByIndexAndSize" parameterType="map" resultMap="staffMap1">
+  	select * from t_staff where 1=1
+  	<if test="name != null">
+        and name like #{name}
+      </if>
+  	<if test="sex != null">
+        and sex=#{sex}
+    </if>	
+  	
+  	limit #{index}, #{size}
+  	
+  </select>
+  
+  <!-- 查询最新添加的员工 -->
+  <select id="findLastStaff" resultType="Staff">
+   select * from t_staff order by no desc limit 1
+  </select>
+  
+  <!-- 查询部门下员工总数 -->
+  <select id="Dcount" parameterType="int" resultType="int">
+  	select count(1) from t_staff where did=#{id}
+  </select>
+  
+  <!-- 添加新员工 -->
+  <insert id="add" parameterType="Staff">
+    insert into t_staff (no, name, did, 
+      flag, sex, email, qq, 
+      phone, createdate, photo
+      )
+    values (#{no}, #{name}, #{did}, 
+      #{flag}, #{sex}, #{email}, #{qq}, 
+      #{phone}, #{createdate}, #{photo}
+      )
+  </insert>
+  
+  <!-- 修改员工信息 -->
+  <update id="update" parameterType="Staff">
+    update t_staff
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="did != null">
+        did = #{did},
+      </if>
+      <if test="flag != null">
+        flag = #{flag},
+      </if>
+      <if test="sex != null">
+        sex = #{sex},
+      </if>
+      <if test="email != null">
+        email = #{email},
+      </if>
+      <if test="qq != null">
+        qq = #{qq},
+      </if>
+      <if test="phone != null">
+        phone = #{phone},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate},
+      </if>
+      <if test="photo != null">
+        photo = #{photo},
+      </if>
+    </set>
+    where no = #{no}
+  </update>
+  
+  <!-- 根据工号删除员工 -->
+  <delete id="delete" parameterType="String">
+  	delete from t_staff where no=#{no}
+  </delete>
+  
+  <!-- 通过工号查找员工 -->
+  <select id="findByNo" parameterType="String" resultType="Staff">
+  	select * from t_staff where no=#{no}
+  </select>
+  
+  <!-- 查询所有员工 -->
+  <select id="findAll" resultType="Staff">
+  	select no, name from t_staff
+  </select>
+  
+   <!-- 通过姓名查找员工 -->
+  <select id="findByName" parameterType="String" resultType="Staff">
+  	select * from t_staff where name=#{name}
+  </select>
+  
+</mapper>

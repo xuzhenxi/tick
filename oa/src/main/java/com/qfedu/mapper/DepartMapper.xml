@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IDepartDao">
+  <resultMap id="departMap" type="Depart">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="Createtime" jdbcType="DATE" property="createtime" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+  </resultMap>
+  
+  <!-- 分页查询部门嵌套查询 -->
+  <resultMap id="departMap2" type="Depart">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="Createtime" jdbcType="DATE" property="createtime" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    	<association property="dcount"
+    		javaType="Integer"
+    		column="id"
+    		select="com.qfedu.dao.IStaffDao.Dcount"
+    	
+    	>
+    	</association>
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, Createtime, flag
+  </sql>
+  	
+  <!-- 查询所有部门 -->	
+  <select id="findAll" resultType="Depart">
+	select * from t_depart   
+  </select>	
+ 
+  <!-- 查询员工所在部门 --> 
+  <select id="findDeptByStaffDid" parameterType="int" resultMap="departMap">
+  	select * from t_depart where id=#{did}
+  </select>
+ 
+  <!-- 查询部门总数 -->
+  <select id="count" resultType="int">
+  	select count(1) from t_depart
+  </select>
+  
+  <!-- 分页查询部门 -->
+  <select id="findByIndexAndSize" parameterType="map" resultMap="departMap2">
+  	select * from t_depart limit #{index}, #{size}
+  </select>
+ 
+  <!-- 添加新部门 -->
+  <insert id="add" parameterType="Depart">
+ 	insert into t_depart(name, createtime, flag) value(#{name}, #{createtime}, #{flag})
+  </insert>
+  
+  <!-- 修改部门名称 -->
+  <update id="update" parameterType="Depart">
+  	update t_depart set name=#{name} where id=#{id}
+  </update>
+  
+  <!-- 删除部门 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_depart where id=#{id}
+  </delete>
+  
+  <!-- 通过部门名称查找所有部门 -->
+  <select id="findByName" parameterType="String" resultType="Depart">
+  	select * from t_depart where name=#{name}
+  </select>
+ 
+  <!-- 通过部门id查找部门 -->
+  <select id="findById" parameterType="int" resultType="Depart">
+  	select * from t_depart where id=#{id}
+  </select>
+  
+  <!-- 通过部门名称查找部门 -->
+  <select id="findByDname" parameterType="String" resultType="Depart">
+  	select * from t_depart where name=#{name}
+  </select>
+  
+</mapper>

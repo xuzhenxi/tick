@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	
+	<settings>
+	    <!-- 启用懒加载，必须按照下面方式配置 -->
+		<setting name="lazyLoadingEnabled" value="false"/>
+		<!-- 将积极加载改为消极加载即按需加载。必须写,且为false才会懒加载 -->  
+		<setting name="aggressiveLazyLoading" value="false"/>
+		<!-- 开启二级缓存 -->
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+
+	<!-- 设置类的别名 -->
+	<typeAliases>
+		<typeAlias type="com.qfedu.entity.Address" alias="Address"/>
+		<typeAlias type="com.qfedu.entity.City" alias="City"/>
+		<typeAlias type="com.qfedu.entity.Contect" alias="Contect"/>
+		<typeAlias type="com.qfedu.entity.County" alias="County"/>
+		<typeAlias type="com.qfedu.entity.Course" alias="Course"/>
+		<typeAlias type="com.qfedu.entity.Depart" alias="Depart"/>
+		<typeAlias type="com.qfedu.entity.Grade" alias="Grade"/>
+		<typeAlias type="com.qfedu.entity.Log" alias="Log"/>
+		<typeAlias type="com.qfedu.entity.Loginlog" alias="Loginlog"/>
+		<typeAlias type="com.qfedu.entity.Msg" alias="Msg"/>
+		<typeAlias type="com.qfedu.entity.Papers" alias="Papers"/>
+		<typeAlias type="com.qfedu.entity.Province" alias="Province"/>
+		<typeAlias type="com.qfedu.entity.Report" alias="Report"/>
+		<typeAlias type="com.qfedu.entity.Schedule" alias="Schedule"/>
+		<typeAlias type="com.qfedu.entity.Staff" alias="Staff"/>
+		<typeAlias type="com.qfedu.entity.Student" alias="Student"/>
+		<typeAlias type="com.qfedu.entity.User" alias="User"/>
+		<typeAlias type="com.qfedu.entity.Work" alias="Work"/>
+		<typeAlias type="com.qfedu.entity.Authority" alias="Authority"/>
+		<typeAlias type="com.qfedu.entity.Role" alias="Role"/>
+		<typeAlias type="com.qfedu.entity.UserRole" alias="UserRole"/>
+		<typeAlias type="com.qfedu.entity.RoleAuthority" alias="RoleAuthority"/>
+		<typeAlias type="com.qfedu.entity.Check" alias="Check"/>
+
+
+	</typeAliases>
+
+	
+	<!-- 引入映射文件 -->
+	<!-- <mappers>
+		
+	</mappers> -->
+</configuration>

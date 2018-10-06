@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IRoleauthorityDao">
+  <resultMap id="roleAutyMap" type="RoleAuthority">
+    <id column="aid" jdbcType="INTEGER" property="aid" />
+    <id column="rid" jdbcType="INTEGER" property="rid" />
+  </resultMap>
+  
+  <!-- 添加角色权限 -->
+  <insert id="add" parameterType="RoleAuthority">
+  	insert into t_roleauthority(aid, rid) value(#{aid}, #{rid})
+  </insert>
+  
+  <!-- 删除角色所有权限 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_roleauthority where rid=#{rid}
+  </delete>
+  
+  <!-- 通过角色id查询角色权限 -->
+  <select id="findByRid" parameterType="int" resultMap="roleAutyMap">
+  	select * from t_roleauthority where rid=#{rid}
+  </select>
+  
+  <!-- 通过权限id查询角色权限 -->
+  <select id="findByAid" parameterType="int" resultMap="roleAutyMap">
+  	select * from t_roleauthority where aid=#{aid}
+  </select>
+ 
+</mapper>

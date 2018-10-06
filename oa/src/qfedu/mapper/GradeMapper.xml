@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IGradeDao">
+  <resultMap id="gradeMap" type="Grade">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="week" jdbcType="INTEGER" property="week" />
+    <result column="createdate" jdbcType="DATE" property="createdate" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="cid" jdbcType="INTEGER" property="cid" />
+  </resultMap>
+  
+  <!-- 分页查询班级嵌套学科 嵌套学生-->
+  <resultMap id="gradeMap1" type="Grade">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="week" jdbcType="INTEGER" property="week" />
+    <result column="createdate" jdbcType="DATE" property="createdate" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="cid" jdbcType="INTEGER" property="cid" />
+    	<!-- 嵌套科目 -->
+    	<association property="course"
+    		javaType="com.qfedu.entity.Course"
+    		column="cid"
+    		select="com.qfedu.dao.ICourseDao.findById"
+    	>
+    	</association>
+    	
+    	<!-- 嵌套学生数量 -->
+		<association property="scount"
+			javaType="Integer"
+			column="id"
+			select="com.qfedu.dao.IStudentDao.findCountByGid"
+		>
+		
+		</association>    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, flag, week, createdate, location, cid
+  </sql>
+  
+  <!-- 根据学科id查找班级数量 -->
+  <select id="findCountByCid" parameterType="int" resultType="int">
+  	select count(1) from t_grade where cid=#{cid}
+  </select>
+  
+   <!-- 获得班级数量 -->
+  <select id="count" resultType="int">
+  	select count(1) from t_grade where 1=1
+  </select>
+  
+  <!-- 分页查询 -->
+  <select id="findByIndexAndSize" parameterType="map" resultMap="gradeMap1">
+  	select * from t_grade where 1=1
+  	
+  	limit #{index}, #{size}
+  	
+  </select>
+  
+  <!-- 添加班级 -->
+  <insert id="add" parameterType="Grade">
+    insert into t_grade (name, flag, 
+      week, createdate, location, 
+      cid)
+    values (#{name}, #{flag}, 
+      #{week}, #{createdate}, #{location}, 
+      #{cid})
+  </insert>
+  
+  <!-- 修改班级 -->
+  <update id="update" parameterType="Grade">
+    update t_grade
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="flag != null">
+        flag = #{flag},
+      </if>
+      <if test="week != null">
+        week = #{week},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate},
+      </if>
+      <if test="location != null">
+        location = #{location},
+      </if>
+      <if test="cid != null">
+        cid = #{cid},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <!-- 删除班级 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_grade where id=#{id}
+  </delete>
+  
+  <!-- 查询指定名字班级个数 -->
+  <select id="findCountByName" parameterType="String" resultType="int">
+  	select count(1) from t_grade where name=#{name}
+  </select>
+  
+  <!-- 根据id查询班级 -->
+  <select id="findById" parameterType="int" resultType="Grade">
+  	select * from t_grade where id=#{id}
+  </select>
+  
+  <!-- 查找所有班级 -->
+  <select id="findAll" resultType="Grade">
+  	select * from t_grade
+  </select>
+  
+  <!-- 查询指定名字班级个数 -->
+  <select id="findByName" parameterType="String" resultType="Grade">
+  	select * from t_grade where name=#{name}
+  </select>
+  
+</mapper>

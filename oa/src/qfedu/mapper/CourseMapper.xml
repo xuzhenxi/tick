@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.ICourseDao">
+  <resultMap id="courseMap" type="Course">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="week" jdbcType="INTEGER" property="week" />
+    <result column="createdate" jdbcType="DATE" property="createdate" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, flag, week, createdate, type
+  </sql>
+  
+   <!-- 获得学科数量 -->
+  <select id="count" resultType="int">
+  	select count(1) from t_course where 1=1
+  </select>
+  
+  <!-- 分页查询 -->
+  <select id="findByIndexAndSize" parameterType="map" resultMap="courseMap">
+  	select * from t_course where 1=1
+  	
+  	limit #{index}, #{size}
+  	
+  </select>
+  
+  <!-- 添加新科目 -->
+  <insert id="add" parameterType="Course">
+  	insert into t_course (name, flag, 
+      week, createdate, type
+      )
+    values(#{name}, #{flag}, 
+      #{week}, #{createdate}, #{type}
+      )
+  </insert>
+  
+  <!-- 修改科目 -->
+  <update id="update" parameterType="Course">
+    update t_course
+    <set>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="flag != null">
+        flag = #{flag},
+      </if>
+      <if test="week != null">
+        week = #{week},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate},
+      </if>
+      <if test="type != null">
+        type = #{type},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <!-- 删除学科 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_course where id=#{id}
+  </delete>
+  
+  <!-- 查找指定名字学科数量 -->
+  <select id="findCountByName" parameterType="String" resultType="int">
+	select count(1) from t_course where name=#{name}  
+  </select>
+  
+  <!-- 通过id查找学科 -->
+  <select id="findById" parameterType="int" resultType="Course">
+	select * from t_course where id=#{id}  
+  </select>
+  
+  <!-- 查找所有学科 -->
+  <select id="findAll" resultType="Course">
+	select id, name from t_course  
+  </select>
+  
+</mapper>

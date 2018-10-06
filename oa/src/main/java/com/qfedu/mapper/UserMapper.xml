@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.IUserDao">
+  <resultMap id="userMap" type="User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="headphoto" jdbcType="VARCHAR" property="headphoto" />
+  </resultMap>
+  
+  <resultMap id="userMap2" type="User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="headphoto" jdbcType="VARCHAR" property="headphoto" />
+    
+    <collection property="role"
+    	javaType="java.util.ArrayList"
+    	ofType="com.qfedu.entity.Role"
+    	column="no"
+    	select="com.qfedu.dao.IRoleDao.findRoleByNo"
+    >
+    
+    </collection>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    id, no, password, name, flag, headphoto
+  </sql>
+  
+  <!-- 通过账号查找用户 -->
+  <select id="findByNo" parameterType="String" resultMap="userMap2">
+   	select * from t_user where no=#{no}
+  </select>
+  
+  <!-- 获取用户总数 -->
+  <select id="count" parameterType="map" resultType="int">
+  	select count(1) from t_user where 1=1
+  	 <if test="no != null">
+        and no like #{no}
+      </if>
+  	<if test="flag != 0">
+        and flag=#{flag}
+    </if>
+  </select>
+  
+  <!-- 分页查询用户 -->
+  <select id="findByIndexAndSize" parameterType="map" resultMap="userMap2">
+  	select u.id, u.no, u.name, u.flag from t_user u where 1=1
+  	
+      <if test="no != null">
+        and u.no like #{no}
+      </if>
+      <if test="flag != 0">
+        and u.flag=#{flag}
+      </if>
+      
+  	limit #{index},#{size}
+  </select>
+  
+  <!-- 删除指定用户 -->
+  <delete id="delete" parameterType="int">
+  	delete from t_user where id=#{id}
+  </delete>
+  
+  <!-- 根据id查找用户 -->
+  <select id="findById" parameterType="int" resultMap="userMap">
+  	select * from t_user where id=#{id}
+  </select>
+  
+  <!-- 根据id查找用户 -->
+  <select id="findByRole" parameterType="int" resultMap="userMap">
+  	select * from t_user u
+  	inner join t_userrole ur
+  	on u.id = ur.uid
+  	inner join t_role r
+  	on ur.rid = r.id
+  	where r.id=#{id}
+  </select>
+  
+
+</mapper>
